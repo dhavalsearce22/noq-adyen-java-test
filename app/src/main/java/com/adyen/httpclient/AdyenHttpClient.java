@@ -193,9 +193,9 @@ public class AdyenHttpClient implements ClientInterface {
         if (config.getClientKeyStore() != null && config.getTrustKeyStore() != null) {
             return createHttpClientWithSocketFactory(getClientCertificateAuthSSLContext(config));
         }
-//        if (config.getTerminalCertificate() != null) {
-//            return createHttpClientWithSocketFactory(getTerminalCertificateSocketFactory(config));
-//        }
+        if (config.getTerminalCertificate() != null) {
+            return createHttpClientWithSocketFactory(getTerminalCertificateSocketFactory(config));
+        }
         return HttpClients.createSystem();
     }
 
