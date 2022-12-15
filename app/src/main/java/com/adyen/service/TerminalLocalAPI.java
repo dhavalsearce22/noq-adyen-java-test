@@ -81,7 +81,6 @@ public class TerminalLocalAPI extends ApiKeyAuthenticatedService {
 
     public TerminalAPIResponse requestNonEncrypted(TerminalAPIRequest terminalAPIRequest) throws Exception {
         String jsonRequest = terminalApiGson.toJson(terminalAPIRequest);
-
         String jsonResponse = localRequest.request(jsonRequest);
         Log.e("RESPONSE", jsonResponse);
         if (jsonResponse == null || jsonResponse.isEmpty()) {

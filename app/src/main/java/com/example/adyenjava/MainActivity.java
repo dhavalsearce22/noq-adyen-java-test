@@ -1,6 +1,5 @@
 package com.example.adyenjava;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContextWrapper;
@@ -40,13 +39,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -84,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 StrictMode.setThreadPolicy(policy);
 
                 Config config = new Config();
+//                config.setApiKey();
 //                config.setApiKey(txt5.getText().toString());
                 ContextWrapper c = new ContextWrapper(getApplicationContext());
                 try {
@@ -102,7 +100,10 @@ public class MainActivity extends AppCompatActivity {
                 config.setTerminalApiLocalEndpoint(txt1.getText().toString());
                 Client client = new Client(config);
                 client.setEnvironment(Environment.TEST, null);
+//                client.getConfig().setApiKey("AQEpgXvdQM2NG2Yd7nqxnH12icuqaYhOAoZETJuvSmgWWbNNbRDDdyQr1EsQwV1bDb7kfNy1WIxIIkxgBw==-W3A7lw6rwLzaze6MClpXJLJ++4tGcGnw80Vxcbk+cwQ=-__KxSXhz+J5Y9(S#");
                 TerminalLocalAPI terminalLocalApi = new TerminalLocalAPI(client);
+                terminalLocalApi.setApiKeyRequired(false);
+//                Log.e("V", String.valueOf());
                 try {
                     TerminalAPIRequest terminalAPIPaymentRequest = createTerminalAPIPaymentRequest();
 
@@ -132,10 +133,29 @@ public class MainActivity extends AppCompatActivity {
                 StrictMode.setThreadPolicy(policy);
 
                 Config config = new Config();
+//                config.setApiKey("AQEpgXvdQM2NG2Yd7nqxnH12icuqaYhOAoZETJuvSmgWWbNNbRDDdyQr1EsQwV1bDb7kfNy1WIxIIkxgBw==-W3A7lw6rwLzaze6MClpXJLJ++4tGcGnw80Vxcbk+cwQ=-__KxSXhz+J5Y9(S#");
+                config.setTerminalApiLocalEndpoint(txt1.getText().toString());
+                ContextWrapper c = new ContextWrapper(getApplicationContext());
+                try {
+                    config.setTerminalCertificate(c.getAssets().open("adyen-terminalfleet-test.pem"));
+                    Log.i("CALLED HERE", "SUCCESS");
+                } catch (CertificateException e) {
+                    Log.i("CALLED HERE", "ERROR");
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    Log.i("CALLED HERE", "ERROR");
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    Log.i("CALLED HERE", "ERROR");
+                    e.printStackTrace();
+                }
                 config.setTerminalApiLocalEndpoint(txt1.getText().toString());
                 Client client = new Client(config);
                 client.setEnvironment(Environment.TEST, null);
+//                client.getConfig().setApiKey("AQEpgXvdQM2NG2Yd7nqxnH12icuqaYhOAoZETJuvSmgWWbNNbRDDdyQr1EsQwV1bDb7kfNy1WIxIIkxgBw==-W3A7lw6rwLzaze6MClpXJLJ++4tGcGnw80Vxcbk+cwQ=-__KxSXhz+J5Y9(S#");
                 TerminalLocalAPI terminalLocalApi = new TerminalLocalAPI(client);
+                terminalLocalApi.setApiKeyRequired(false);
+                Log.e("VADV", String.valueOf(terminalLocalApi.isApiKeyRequired()));
                 try {
                     TerminalAPIRequest terminalAPIPaymentRequest = createTerminalAPIPaymentRequest();
                     Log.e("REQUEST", terminalAPIPaymentRequest.getSaleToPOIRequest().toString());
