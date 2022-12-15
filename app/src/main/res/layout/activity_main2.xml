@@ -76,6 +76,14 @@
             android:text="ADYEN PAY"
             tools:ignore="MissingConstraints" />
 
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="NON ENCRYPTED"
+            tools:ignore="MissingConstraints" />
+
         <EditText
             android:id="@+id/editTextTextMultiLine"
             android:layout_width="match_parent"

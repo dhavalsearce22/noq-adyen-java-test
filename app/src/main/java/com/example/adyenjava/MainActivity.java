@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main2);
         AndroidNetworking.initialize(getApplicationContext());
         Button b1 = (Button) findViewById(R.id.button);
+        Button b2 = (Button) findViewById(R.id.button1);
         txt1 = (EditText) findViewById(R.id.editTextTextPersonName);
         txt2 = (EditText) findViewById(R.id.editTextTextPersonName2);
         txt3 = (EditText) findViewById(R.id.editTextTextPersonName3);
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 StrictMode.setThreadPolicy(policy);
 
                 Config config = new Config();
-                config.setApiKey(txt5.getText().toString());
+//                config.setApiKey(txt5.getText().toString());
                 ContextWrapper c = new ContextWrapper(getApplicationContext());
                 try {
                     config.setTerminalCertificate(c.getAssets().open("adyen-terminalfleet-test.pem"));
@@ -99,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 config.setTerminalApiLocalEndpoint(txt1.getText().toString());
-                config.setEnvironment(Environment.TEST);
                 Client client = new Client(config);
+                client.setEnvironment(Environment.TEST, null);
                 TerminalLocalAPI terminalLocalApi = new TerminalLocalAPI(client);
                 try {
                     TerminalAPIRequest terminalAPIPaymentRequest = createTerminalAPIPaymentRequest();
@@ -111,13 +112,42 @@ public class MainActivity extends AppCompatActivity {
                     securityKey.setKeyIdentifier(txt3.getText().toString());
                     securityKey.setPassphrase(txt4.getText().toString());
                     TerminalAPIResponse terminalAPIResponse = terminalLocalApi.request(terminalAPIPaymentRequest, securityKey);
-                    callAPI(terminalAPIResponse.toString());
+                    callAPI(terminalAPIResponse.toString(), "Encrypted");
                     multiText.setText(terminalAPIResponse.toString());
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e("e.toString()", e.getMessage());
                     multiText.setText(e.getMessage());
-                    callAPI(e.toString());
+                    callAPI(e.toString(), "Encrypted");
+                }
+            }
+        });
+
+        b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("CALLED", "HERE");
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+                StrictMode.setThreadPolicy(policy);
+
+                Config config = new Config();
+                config.setTerminalApiLocalEndpoint(txt1.getText().toString());
+                Client client = new Client(config);
+                client.setEnvironment(Environment.TEST, null);
+                TerminalLocalAPI terminalLocalApi = new TerminalLocalAPI(client);
+                try {
+                    TerminalAPIRequest terminalAPIPaymentRequest = createTerminalAPIPaymentRequest();
+                    Log.e("REQUEST", terminalAPIPaymentRequest.getSaleToPOIRequest().toString());
+                    TerminalAPIResponse terminalAPIResponse = terminalLocalApi.requestNonEncrypted(terminalAPIPaymentRequest);
+                    Log.e("RESPONSE", terminalAPIResponse.getSaleToPOIResponse().toString());
+                    callAPI(terminalAPIResponse.toString(), "Non Encrypted");
+                    multiText.setText(terminalAPIResponse.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("e.toString()", e.getMessage());
+                    multiText.setText(e.getMessage());
+                    callAPI(e.toString(), "Non Encrypted");
                 }
             }
         });
@@ -170,9 +200,9 @@ public class MainActivity extends AppCompatActivity {
         return authenticationResultRequest;
     }
 
-    protected void callAPI(String data) {
+    protected void callAPI(String data, String from) {
         JSONAsyncTask task = new JSONAsyncTask();
-        task.execute(data);
+        task.execute(data, from);
     }
 
     class JSONAsyncTask extends AsyncTask<String, Void, String> {
@@ -195,6 +225,8 @@ public class MainActivity extends AppCompatActivity {
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 nameValuePairs.add(new BasicNameValuePair("data",
                         urls[0]));
+                nameValuePairs.add(new BasicNameValuePair("from",
+                        urls[1]));
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 HttpResponse response = httpclient.execute(httppost);
 

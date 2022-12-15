@@ -20,6 +20,8 @@
  */
 package com.adyen.service;
 
+import android.util.Log;
+
 import com.adyen.ApiKeyAuthenticatedService;
 import com.adyen.Client;
 import com.adyen.model.terminal.TerminalAPIRequest;
@@ -74,6 +76,18 @@ public class TerminalLocalAPI extends ApiKeyAuthenticatedService {
         SaleToPOISecuredMessage saleToPOISecuredResponse = securedPaymentResponse.getSaleToPOIResponse();
         String jsonDecryptedResponse = nexoCrypto.decrypt(saleToPOISecuredResponse, securityKey);
         return terminalApiGson.fromJson(jsonDecryptedResponse, new TypeToken<TerminalAPIResponse>() {
+        }.getType());
+    }
+
+    public TerminalAPIResponse requestNonEncrypted(TerminalAPIRequest terminalAPIRequest) throws Exception {
+        String jsonRequest = terminalApiGson.toJson(terminalAPIRequest);
+
+        String jsonResponse = localRequest.request(jsonRequest);
+        Log.e("RESPONSE", jsonResponse);
+        if (jsonResponse == null || jsonResponse.isEmpty()) {
+            return null;
+        }
+        return terminalApiGson.fromJson(jsonResponse, new TypeToken<TerminalAPIResponse>() {
         }.getType());
     }
 }
